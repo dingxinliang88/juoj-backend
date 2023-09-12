@@ -7,3 +7,5 @@ target/
 .vscode
 
 .DS_Store
+
+src/main/resources/database_config
