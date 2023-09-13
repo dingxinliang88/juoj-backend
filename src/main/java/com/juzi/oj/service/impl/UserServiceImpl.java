@@ -10,8 +10,7 @@ import com.juzi.oj.constants.CommonConstant;
 import com.juzi.oj.constants.UserConstant;
 import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.mapper.UserMapper;
-import com.juzi.oj.model.dto.UserQueryRequest;
-import com.juzi.oj.model.dto.UserUpdateRequest;
+import com.juzi.oj.model.dto.*;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.enums.UserRoleEnum;
 import com.juzi.oj.model.vo.UserVO;
@@ -173,12 +172,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Boolean userLogout(HttpServletRequest request) {
-        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         if (userObj == null) {
             throw new BusinessException(StatusCode.OPERATION_ERROR, "未登录");
         }
         // 移除登录态
-        request.getSession().removeAttribute(UserConstant.USER_LOGIN_STATE);
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
         return Boolean.TRUE;
     }
 
@@ -302,6 +301,102 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .set(StringUtils.isNotBlank(email), User::getEmail, email);
 
         return updateWrapper;
+    }
+
+    @Override
+    public Boolean changePwd(UserChangePwdRequest userChangePwdRequest, HttpServletRequest request) {
+        String originPassword = userChangePwdRequest.getOriginPassword();
+        String newPassword = userChangePwdRequest.getNewPassword();
+        String checkPassword = userChangePwdRequest.getCheckPassword();
+
+        if (StringUtils.isAnyBlank(originPassword, newPassword, checkPassword)) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        if (originPassword.length() < MIN_PWD_LEN || newPassword.length() < MIN_PWD_LEN || checkPassword.length() < MIN_PWD_LEN) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "密码错误");
+        }
+
+        if (newPassword.length() != checkPassword.length() || !newPassword.equals(checkPassword)) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "两次输入密码不一致");
+        }
+
+        // 判断密码是否正确
+        User loginUser = this.getLoginUser(request);
+        String encryptPassword = SysUtils.encryptPassword(loginUser.getSalt(), originPassword);
+        if (!loginUser.getUserPassword().equals(encryptPassword)) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "原始密码错误");
+        }
+        // 生成新的盐值和新的密码
+        String newSalt = SysUtils.genSalt();
+        String newEncryptPassword = SysUtils.encryptPassword(newSalt, newPassword);
+
+        // 更新数据库信息
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(User::getId, loginUser.getId())
+                .set(User::getSalt, newSalt)
+                .set(User::getUserPassword, newEncryptPassword);
+
+        boolean updateRes = this.update(updateWrapper);
+        if (!updateRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR);
+        }
+        // 删除用户的Session， 重新登录
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean updateState(UserStateUpdateRequest userStateUpdateRequest) {
+        Long userId = userStateUpdateRequest.getUserId();
+        Integer userState = userStateUpdateRequest.getUserState();
+
+        if (userId <= 0 || !STATE_SET.contains(userState)) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(User::getId, userId)
+                .set(User::getUserState, userState);
+        boolean updateRes = this.update(updateWrapper);
+        if (!updateRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR);
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean resetUserPwd(UserResetPwdRequest userResetPwdRequest) {
+        Long userId = userResetPwdRequest.getUserId();
+        String newPassword = userResetPwdRequest.getNewPassword();
+        String checkPassword = userResetPwdRequest.getCheckPassword();
+
+        if (userId <= 0 || StringUtils.isAnyBlank(newPassword, checkPassword)) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        if (newPassword.length() < MIN_PWD_LEN || checkPassword.length() < MIN_PWD_LEN) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "密码过短");
+        }
+
+        if (newPassword.length() != checkPassword.length() || !newPassword.equals(checkPassword)) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "两次输入密码不一致");
+        }
+        // 生成新的盐值和新的密码
+        String newSalt = SysUtils.genSalt();
+        String newEncryptPassword = SysUtils.encryptPassword(newSalt, newPassword);
+
+        // 更新数据库信息
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(User::getId, userId)
+                .set(User::getSalt, newSalt)
+                .set(User::getUserPassword, newEncryptPassword);
+
+        boolean updateRes = this.update(updateWrapper);
+        if (!updateRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR);
+        }
+        return Boolean.TRUE;
     }
 
 

@@ -6,12 +6,8 @@ import com.juzi.oj.common.BaseResponse;
 import com.juzi.oj.common.DeleteRequest;
 import com.juzi.oj.common.ResultUtils;
 import com.juzi.oj.common.StatusCode;
-import com.juzi.oj.constants.UserConstant;
 import com.juzi.oj.exception.BusinessException;
-import com.juzi.oj.model.dto.UserLoginRequest;
-import com.juzi.oj.model.dto.UserQueryRequest;
-import com.juzi.oj.model.dto.UserRegisterRequest;
-import com.juzi.oj.model.dto.UserUpdateRequest;
+import com.juzi.oj.model.dto.*;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.UserVO;
 import com.juzi.oj.service.UserService;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 import static com.juzi.oj.constants.UserConstant.ADMIN_ROLE;
 
@@ -84,7 +79,7 @@ public class UserController {
         return ResultUtils.success(userService.getUserVO(user));
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     @AuthCheck(mustRole = ADMIN_ROLE)
     @ApiOperation(value = "管理员删除用户")
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest) {
@@ -132,7 +127,7 @@ public class UserController {
     @AuthCheck(mustRole = ADMIN_ROLE)
     @ApiOperation(value = "管理员修改用户信息")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
-        if(userUpdateRequest == null) {
+        if (userUpdateRequest == null) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
         }
         return ResultUtils.success(userService.updateUser(userUpdateRequest));
@@ -141,11 +136,40 @@ public class UserController {
     @PutMapping("/update/my")
     @ApiOperation(value = "用户修改个人用户信息")
     public BaseResponse<Boolean> updateSelf(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
-        if(userUpdateRequest == null) {
+        if (userUpdateRequest == null) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
         }
         return ResultUtils.success(userService.updateSelf(userUpdateRequest, request));
     }
 
-    // todo 用户修改密码 && 管理修改用户状态和角色（以及重置密码）
+    @PutMapping("/change_pwd")
+    @ApiOperation(value = "用户修改密码")
+    public BaseResponse<Boolean> changePwd(@RequestBody UserChangePwdRequest userChangePwdRequest, HttpServletRequest request) {
+        if (userChangePwdRequest == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(userService.changePwd(userChangePwdRequest, request));
+    }
+
+    @PutMapping("/update/state")
+    @AuthCheck(mustRole = ADMIN_ROLE)
+    @ApiOperation(value = "管理员修改用户状态信息")
+    public BaseResponse<Boolean> updateState(@RequestBody UserStateUpdateRequest userStateUpdateRequest) {
+        if (userStateUpdateRequest == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(userService.updateState(userStateUpdateRequest));
+    }
+
+    @PutMapping("/reset/pwd")
+    @AuthCheck(mustRole = ADMIN_ROLE)
+    @ApiOperation(value = "管理员重置用户密码")
+    public BaseResponse<Boolean> resetUserPwd(@RequestBody UserResetPwdRequest userResetPwdRequest) {
+        if (userResetPwdRequest == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        return ResultUtils.success(userService.resetUserPwd(userResetPwdRequest));
+    }
+
 }

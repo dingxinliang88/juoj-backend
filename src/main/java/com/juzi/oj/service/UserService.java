@@ -1,14 +1,11 @@
 package com.juzi.oj.service;
 
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.juzi.oj.model.dto.UserQueryRequest;
-import com.juzi.oj.model.dto.UserUpdateRequest;
+import com.juzi.oj.model.dto.*;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.UserVO;
 
@@ -114,4 +111,10 @@ public interface UserService extends IService<User> {
     Boolean updateSelf(UserUpdateRequest userUpdateRequest, HttpServletRequest request);
 
     LambdaUpdateWrapper<User> getUpdateWrapper(UserUpdateRequest userUpdateRequest);
+
+    Boolean changePwd(UserChangePwdRequest userChangePwdRequest, HttpServletRequest request);
+
+    Boolean updateState(UserStateUpdateRequest userStateUpdateRequest);
+
+    Boolean resetUserPwd(UserResetPwdRequest userResetPwdRequest);
 }

@@ -31,6 +31,8 @@ public interface UserConstant {
     Integer WRITE_OFF_STATE = 1;
     Integer BAN_STATE = 2;
 
+    Set<Integer> STATE_SET = Set.of(NORMAL_STATE, WRITE_OFF_STATE, BAN_STATE);
+
 
     /**
      * 用户登录态键
