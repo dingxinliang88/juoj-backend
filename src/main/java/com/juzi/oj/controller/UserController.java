@@ -7,7 +7,7 @@ import com.juzi.oj.common.DeleteRequest;
 import com.juzi.oj.common.ResultUtils;
 import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.exception.BusinessException;
-import com.juzi.oj.model.dto.*;
+import com.juzi.oj.model.dto.user.*;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.UserVO;
 import com.juzi.oj.service.UserService;
@@ -27,10 +27,10 @@ import static com.juzi.oj.constants.UserConstant.ADMIN_ROLE;
  *
  * @author Shier
  */
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @Api(tags = "UserController")
-@Slf4j
 @CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class UserController {
 

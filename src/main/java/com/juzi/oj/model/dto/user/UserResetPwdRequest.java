@@ -1,4 +1,4 @@
-package com.juzi.oj.model.dto;
+package com.juzi.oj.model.dto.user;
 
 import lombok.Data;
 

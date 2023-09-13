@@ -1,4 +1,4 @@
-package com.juzi.oj.model.dto;
+package com.juzi.oj.model.dto.user;
 
 import com.juzi.oj.common.PageRequest;
 import lombok.Data;

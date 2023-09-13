@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.juzi.oj.model.dto.*;
+import com.juzi.oj.model.dto.user.*;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.UserVO;
 
@@ -104,17 +104,61 @@ public interface UserService extends IService<User> {
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    /**
+     * 分页获取脱敏用户信息
+     *
+     * @param userQueryRequest 用户查询请求
+     * @return user vo page
+     */
     Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
 
+    /**
+     * 管理员更新用户信息
+     *
+     * @param userUpdateRequest 用户更新信息请求
+     * @return true - 更新成功
+     */
     Boolean updateUser(UserUpdateRequest userUpdateRequest);
 
+    /**
+     * 用户更新自己的信息
+     *
+     * @param userUpdateRequest 用户更新请求
+     * @param request           http request
+     * @return true - 更新成功
+     */
     Boolean updateSelf(UserUpdateRequest userUpdateRequest, HttpServletRequest request);
 
+    /**
+     * 获取更新条件
+     *
+     * @param userUpdateRequest 用户更新请求
+     * @return 更新信息包装体
+     */
     LambdaUpdateWrapper<User> getUpdateWrapper(UserUpdateRequest userUpdateRequest);
 
+    /**
+     * 用户更新密码
+     *
+     * @param userChangePwdRequest 更新密码请求
+     * @param request              http request
+     * @return true - 更新成功
+     */
     Boolean changePwd(UserChangePwdRequest userChangePwdRequest, HttpServletRequest request);
 
+    /**
+     * 管理员修改用户状态
+     *
+     * @param userStateUpdateRequest 用户状态更新请求
+     * @return true - 更新成功
+     */
     Boolean updateState(UserStateUpdateRequest userStateUpdateRequest);
 
+    /**
+     * 管理员重置用户密码
+     *
+     * @param userResetPwdRequest 重置用户密码请求
+     * @return true - 重置成功
+     */
     Boolean resetUserPwd(UserResetPwdRequest userResetPwdRequest);
 }

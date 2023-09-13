@@ -10,7 +10,7 @@ import com.juzi.oj.constants.CommonConstant;
 import com.juzi.oj.constants.UserConstant;
 import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.mapper.UserMapper;
-import com.juzi.oj.model.dto.*;
+import com.juzi.oj.model.dto.user.*;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.enums.UserRoleEnum;
 import com.juzi.oj.model.vo.UserVO;
@@ -39,6 +39,9 @@ import static com.juzi.oj.constants.UserConstant.*;
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    final int MAX_QUERY_SIZE = 20;
+
     @Override
     public Long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -219,10 +222,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
-        long current = userQueryRequest.getCurrent();
-        long size = userQueryRequest.getPageSize();
+        Long current = userQueryRequest.getCurrent();
+        Long size = userQueryRequest.getPageSize();
         // 限制爬虫
-        if (size > 20) {
+        if (size > MAX_QUERY_SIZE) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "一次性获取数据过多！");
         }
         Page<User> userPage = this.page(new Page<>(current, size),

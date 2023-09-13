@@ -22,8 +22,8 @@ public class Knife4jConfig {
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("Ju-Connect接口文档")
-                        .version("0.0.1")
+                        .title("Ju-OJ接口文档")
+                        .version("1.0")
                         .build())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.juzi.oj.controller"))
