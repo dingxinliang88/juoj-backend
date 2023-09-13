@@ -1,9 +1,14 @@
 package com.juzi.oj.service;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.juzi.oj.model.dto.UserQueryRequest;
+import com.juzi.oj.model.dto.UserUpdateRequest;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.UserVO;
 
@@ -32,7 +37,7 @@ public interface UserService extends IService<User> {
      *
      * @param userAccount  用户账户
      * @param userPassword 用户密码
-     * @param request http request
+     * @param request      http request
      * @return 脱敏后的用户信息
      */
     UserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
@@ -101,4 +106,12 @@ public interface UserService extends IService<User> {
      * @return query wrapper
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
+
+    Boolean updateUser(UserUpdateRequest userUpdateRequest);
+
+    Boolean updateSelf(UserUpdateRequest userUpdateRequest, HttpServletRequest request);
+
+    LambdaUpdateWrapper<User> getUpdateWrapper(UserUpdateRequest userUpdateRequest);
 }

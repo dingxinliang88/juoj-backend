@@ -2,6 +2,8 @@ package com.juzi.oj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.constants.CommonConstant;
@@ -9,18 +11,19 @@ import com.juzi.oj.constants.UserConstant;
 import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.mapper.UserMapper;
 import com.juzi.oj.model.dto.UserQueryRequest;
+import com.juzi.oj.model.dto.UserUpdateRequest;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.enums.UserRoleEnum;
+import com.juzi.oj.model.vo.UserVO;
 import com.juzi.oj.service.UserService;
 import com.juzi.oj.utils.SqlUtils;
+import com.juzi.oj.utils.SysUtils;
+import com.juzi.oj.utils.ThrowUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.DigestUtils;
-import com.juzi.oj.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -52,7 +55,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userPassword.length() < MIN_PWD_LEN || checkPassword.length() < MIN_PWD_LEN) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "用户密码过短");
         }
-        // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
@@ -67,26 +69,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getUserAccount, userAccount);
             long count = this.count(queryWrapper);
-            if (count > 0) {
-                throw new BusinessException(StatusCode.PARAMS_ERROR, "账号重复");
-            }
+            ThrowUtils.throwIf(count > 0, new BusinessException(StatusCode.PARAMS_ERROR, "账号重复"));
 
-            String salt = RandomStringUtils.randomAlphabetic(SALT_LEN);
+            // 生成盐值
+            String salt = SysUtils.genSalt();
 
             // 2. 加密
-            String encryptPassword = DigestUtils.md5DigestAsHex((salt + userPassword).getBytes());
+            String encryptPassword = SysUtils.encryptPassword(salt, userPassword);
             // 3. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
             user.setSalt(salt);
-            user.setNickname("OJ_" + RandomStringUtils.randomAlphabetic(DEFAULT_NICK_SUFFIX_LEN));
-            user.setUserAvatar(UserConstant.USER_DEFAULT_AVATAR_URL);
-            user.setUserProfile("该用户很懒，什么都没有写");
+            user.setNickname(SysUtils.genDefaultNickname());
+            user.setUserAvatar(DEFAULT_USER_AVATAR);
+            user.setUserProfile(DEFAULT_USER_PROFILE);
             boolean saveResult = this.save(user);
-            if (!saveResult) {
-                throw new BusinessException(StatusCode.SYSTEM_ERROR, "注册失败，数据库错误");
-            }
+
+            ThrowUtils.throwIf(!saveResult, new BusinessException(StatusCode.SYSTEM_ERROR, "注册失败，数据库错误"));
 
             return user.getId();
         }
@@ -116,7 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         String salt = user.getSalt();
         // 2. 加密
-        String encryptPassword = DigestUtils.md5DigestAsHex((salt + userPassword).getBytes());
+        String encryptPassword = SysUtils.encryptPassword(salt, userPassword);
 
         if (!user.getUserPassword().equals(encryptPassword)) {
             log.info("user login failed, userAccount cannot match userPassword");
@@ -137,10 +137,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(StatusCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
-        long userId = currentUser.getId();
+        Long userId = currentUser.getId();
         currentUser = this.getById(userId);
         if (currentUser == null) {
-            throw new BusinessException(StatusCode.NOT_LOGIN_ERROR);
+            throw new BusinessException(StatusCode.NOT_LOGIN_ERROR, "未登录");
         }
         return currentUser;
     }
@@ -188,7 +188,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return null;
         }
         UserVO userVO = new UserVO();
-        // TODO: 2023/9/12 替换BeanUtils，性能太差
         BeanUtils.copyProperties(user, userVO);
         return userVO;
     }
@@ -218,5 +217,92 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 sortField);
         return queryWrapper;
     }
+
+    @Override
+    public Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
+        long current = userQueryRequest.getCurrent();
+        long size = userQueryRequest.getPageSize();
+        // 限制爬虫
+        if (size > 20) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "一次性获取数据过多！");
+        }
+        Page<User> userPage = this.page(new Page<>(current, size),
+                this.getQueryWrapper(userQueryRequest));
+        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
+        List<UserVO> userVO = this.getUserVO(userPage.getRecords());
+        userVOPage.setRecords(userVO);
+        return userVOPage;
+    }
+
+    @Override
+    public Boolean updateUser(UserUpdateRequest userUpdateRequest) {
+        Long userId = userUpdateRequest.getId();
+        if (userId <= 0) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        long count = this.count(new LambdaQueryWrapper<User>().eq(User::getId, userId));
+        if (count == 0) {
+            throw new BusinessException(StatusCode.NOT_FOUND_ERROR);
+        }
+        LambdaUpdateWrapper<User> updateWrapper = this.getUpdateWrapper(userUpdateRequest);
+        boolean updateRes = this.update(updateWrapper);
+
+        if (!updateRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR);
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean updateSelf(UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
+        Long userId = userUpdateRequest.getId();
+        if (userId <= 0) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        long count = this.count(new LambdaQueryWrapper<User>().eq(User::getId, userId));
+        if (count == 0) {
+            throw new BusinessException(StatusCode.NOT_FOUND_ERROR);
+        }
+
+        User loginUser = this.getLoginUser(request);
+
+        // 自己
+        if (!userId.equals(loginUser.getId())) {
+            throw new BusinessException(StatusCode.NO_AUTH_ERROR);
+        }
+
+        LambdaUpdateWrapper<User> updateWrapper = this.getUpdateWrapper(userUpdateRequest);
+        boolean updateRes = this.update(updateWrapper);
+
+        if (!updateRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR);
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public LambdaUpdateWrapper<User> getUpdateWrapper(UserUpdateRequest userUpdateRequest) {
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        Long id = userUpdateRequest.getId();
+        String nickname = userUpdateRequest.getNickname();
+        String userAvatar = userUpdateRequest.getUserAvatar();
+        String userProfile = userUpdateRequest.getUserProfile();
+        Integer gender = userUpdateRequest.getGender();
+        String phone = userUpdateRequest.getPhone();
+        String email = userUpdateRequest.getEmail();
+
+        updateWrapper.eq(User::getId, id)
+                .set(StringUtils.isNotBlank(nickname), User::getNickname, nickname)
+                .set(StringUtils.isNotBlank(userAvatar), User::getUserAvatar, userAvatar)
+                .set(StringUtils.isNotBlank(userProfile), User::getUserProfile, userProfile)
+                .set(GENDER_SET.contains(gender), User::getGender, gender)
+                .set(StringUtils.isNotBlank(phone), User::getPhone, phone)
+                .set(StringUtils.isNotBlank(email), User::getEmail, email);
+
+        return updateWrapper;
+    }
+
 
 }

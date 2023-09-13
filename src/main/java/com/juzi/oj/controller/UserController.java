@@ -11,6 +11,7 @@ import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.model.dto.UserLoginRequest;
 import com.juzi.oj.model.dto.UserQueryRequest;
 import com.juzi.oj.model.dto.UserRegisterRequest;
+import com.juzi.oj.model.dto.UserUpdateRequest;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.UserVO;
 import com.juzi.oj.service.UserService;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static com.juzi.oj.constants.UserConstant.ADMIN_ROLE;
 
 /**
  * 用户接口
@@ -82,9 +85,9 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = ADMIN_ROLE)
     @ApiOperation(value = "管理员删除用户")
-    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
         }
@@ -92,9 +95,9 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = ADMIN_ROLE)
     @ApiOperation(value = "管理员根据 id 获取用户")
-    public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
+    public BaseResponse<User> getUserById(Long id) {
         if (id <= 0) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
         }
@@ -106,7 +109,7 @@ public class UserController {
     }
 
     @PostMapping("/list/page")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = ADMIN_ROLE)
     @ApiOperation(value = "管理员分页获取用户列表")
     public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest) {
         long current = userQueryRequest.getCurrent();
@@ -122,19 +125,27 @@ public class UserController {
         if (userQueryRequest == null) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
         }
-        long current = userQueryRequest.getCurrent();
-        long size = userQueryRequest.getPageSize();
-        // 限制爬虫
-        if (size > 20) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR, "一次性获取数据过多！");
-        }
-        Page<User> userPage = userService.page(new Page<>(current, size),
-                userService.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
-        List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
-        userVOPage.setRecords(userVO);
-        return ResultUtils.success(userVOPage);
+        return ResultUtils.success(userService.listUserVOByPage(userQueryRequest));
     }
 
-    // TODO: 2023/9/12 用户更新信息 （管理员 && 用户自己）
+    @PutMapping("/update")
+    @AuthCheck(mustRole = ADMIN_ROLE)
+    @ApiOperation(value = "管理员修改用户信息")
+    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
+        if(userUpdateRequest == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(userService.updateUser(userUpdateRequest));
+    }
+
+    @PutMapping("/update/my")
+    @ApiOperation(value = "用户修改个人用户信息")
+    public BaseResponse<Boolean> updateSelf(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
+        if(userUpdateRequest == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(userService.updateSelf(userUpdateRequest, request));
+    }
+
+    // todo 用户修改密码 && 管理修改用户状态和角色（以及重置密码）
 }

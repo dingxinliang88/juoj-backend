@@ -15,16 +15,12 @@ public enum StatusCode {
     PARAMS_ERROR(40000, "请求参数不合法"),
     FORBIDDEN(40300, "拒绝请求"),
     NO_AUTH_ERROR(40100, "无权访问"),
-    BAD_REQUEST(40000, "无效的请求"),
     UNAUTHORIZED(40100, "无权访问"),
-    NOT_FOUND(40400, "请求数据不存在"),
     METHOD_NOT_ALLOWED(40500, "不允许使用该方法请求"),
     CONFLICT(40900, "请求冲突"),
     TOO_MANY_REQUEST(42900, "请求频繁"),
     SYSTEM_ERROR(50000, "系统内部错误"),
     OPERATION_ERROR(50100, "操作错误"),
-    INTERNAL_SERVER_ERROR(50000, "服务器内部错误"),
-    NOT_IMPLEMENTED(50100, "未实现的功能"),
     BAD_GATEWAY(50200, "网关错误"),
     SERVICE_UNAVAILABLE(50300, "服务不可用");
 
