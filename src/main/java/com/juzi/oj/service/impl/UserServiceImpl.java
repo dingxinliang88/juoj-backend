@@ -22,13 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.juzi.oj.constants.UserConstant.*;
@@ -41,6 +40,7 @@ import static com.juzi.oj.constants.UserConstant.*;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     final int MAX_QUERY_SIZE = 20;
+    private final AntPathMatcher ACC_MATCHER = new AntPathMatcher();
 
     @Override
     public Long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -57,12 +57,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userPassword.length() < MIN_PWD_LEN || checkPassword.length() < MIN_PWD_LEN) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "用户密码过短");
         }
-        if (!userPassword.equals(checkPassword)) {
+        if (userPassword.length() != checkPassword.length() || !userPassword.equals(checkPassword)) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
 
-        Matcher matcher = Pattern.compile(ACC_PATTEN).matcher(userAccount);
-        if (!matcher.find()) {
+        if (!ACC_MATCHER.match(ACC_PATTEN, userAccount)) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "账号含有特殊字符");
         }
 
@@ -79,13 +78,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 2. 加密
             String encryptPassword = SysUtils.encryptPassword(salt, userPassword);
             // 3. 插入数据
-            User user = new User();
-            user.setUserAccount(userAccount);
-            user.setUserPassword(encryptPassword);
-            user.setSalt(salt);
-            user.setNickname(SysUtils.genDefaultNickname());
-            user.setUserAvatar(DEFAULT_USER_AVATAR);
-            user.setUserProfile(DEFAULT_USER_PROFILE);
+            User user = User.builder()
+                    .userAccount(userAccount)
+                    .userPassword(encryptPassword)
+                    .salt(salt)
+                    .nickname(SysUtils.genDefaultNickname())
+                    .userAvatar(DEFAULT_USER_AVATAR)
+                    .userProfile(DEFAULT_USER_PROFILE)
+                    .build();
             boolean saveResult = this.save(user);
 
             ThrowUtils.throwIf(!saveResult, new BusinessException(StatusCode.SYSTEM_ERROR, "注册失败，数据库错误"));
@@ -111,13 +111,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUserAccount, userAccount);
         User user = this.getOne(queryWrapper);
+
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(StatusCode.NOT_FOUND_ERROR, "用户不存在");
         }
-        String salt = user.getSalt();
+
         // 2. 加密
+        String salt = user.getSalt();
         String encryptPassword = SysUtils.encryptPassword(salt, userPassword);
 
         if (!user.getUserPassword().equals(encryptPassword)) {
@@ -270,7 +272,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User loginUser = this.getLoginUser(request);
 
-        // 自己
         if (!userId.equals(loginUser.getId())) {
             throw new BusinessException(StatusCode.NO_AUTH_ERROR);
         }

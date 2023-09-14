@@ -7,6 +7,8 @@ import java.util.Set;
  */
 public interface UserConstant {
 
+    // region login && register validation
+
     int MIN_ACC_LEN = 4;
     int MAX_ACC_LEN = 10;
     int MIN_PWD_LEN = 8;
@@ -15,10 +17,10 @@ public interface UserConstant {
     String DEFAULT_NICK_PREFIX = "OJ_";
     String ACC_PATTEN = "^[a-zA-Z0-9]+$";
 
+    // endregion
 
-    /**
-     * 管理员角色
-     */
+
+    // region user gender and state value, admin role value
     String ADMIN_ROLE = "admin";
 
     Integer MAN = 1;
@@ -30,16 +32,24 @@ public interface UserConstant {
     Integer NORMAL_STATE = 0;
     Integer WRITE_OFF_STATE = 1;
     Integer BAN_STATE = 2;
-
     Set<Integer> STATE_SET = Set.of(NORMAL_STATE, WRITE_OFF_STATE, BAN_STATE);
 
+    // endregion
 
+
+    // region user login session
     /**
      * 用户登录态键
      */
     String USER_LOGIN_STATE = "user_login";
 
+    // endregion
+
+
+    // region user default attribution
     String DEFAULT_USER_AVATAR = "https://regengbaike.com/uploads/20230222/1bff61de34bdc7bf40c6278b2848fbcf.jpg";
 
     String DEFAULT_USER_PROFILE = "该用户很懒，什么都没有写";
+
+    // endregion
 }

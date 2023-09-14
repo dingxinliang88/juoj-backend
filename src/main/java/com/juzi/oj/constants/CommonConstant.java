@@ -3,9 +3,11 @@ package com.juzi.oj.constants;
 /**
  * 通用常量
  *
-* @author codejuzi
+ * @author codejuzi
  */
 public interface CommonConstant {
+
+    // region sort order
 
     /**
      * 升序
@@ -16,5 +18,7 @@ public interface CommonConstant {
      * 降序
      */
     String SORT_ORDER_DESC = " descend";
-    
+
+    // endregion
+
 }

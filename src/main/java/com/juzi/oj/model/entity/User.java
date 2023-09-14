@@ -1,6 +1,7 @@
 package com.juzi.oj.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
  */
 @TableName(value = "user")
 @Data
+@Builder
 public class User implements Serializable {
     /**
      * id
