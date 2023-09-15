@@ -30,9 +30,9 @@ public interface UserConstant {
 
     // 0-正常/1-注销/2-封号
     Integer NORMAL_STATE = 0;
-    Integer WRITE_OFF_STATE = 1;
+    Integer LOGOUT_STATE = 1;
     Integer BAN_STATE = 2;
-    Set<Integer> STATE_SET = Set.of(NORMAL_STATE, WRITE_OFF_STATE, BAN_STATE);
+    Set<Integer> STATE_SET = Set.of(NORMAL_STATE, LOGOUT_STATE, BAN_STATE);
 
     // endregion
 
