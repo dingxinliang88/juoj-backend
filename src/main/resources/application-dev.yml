@@ -1,0 +1,17 @@
+spring:
+  config:
+    import:
+      - classpath:/database_config/database.properties
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${datasource.url}
+    username: ${datasource.username}
+    password: ${datasource.password}
+#  redis:
+#    port: 6379
+#    host: localhost
+#    database: 0
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

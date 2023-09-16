@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.juzi.oj.constants.CommonConstant.MAX_FETCH_SIZE;
 import static com.juzi.oj.constants.UserConstant.*;
 
 /**
@@ -39,7 +40,6 @@ import static com.juzi.oj.constants.UserConstant.*;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    final int MAX_QUERY_SIZE = 20;
     private final AntPathMatcher ACC_MATCHER = new AntPathMatcher();
 
     @Override
@@ -227,7 +227,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Long current = userQueryRequest.getCurrent();
         Long size = userQueryRequest.getPageSize();
         // 限制爬虫
-        if (size > MAX_QUERY_SIZE) {
+        if (size > MAX_FETCH_SIZE) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "一次性获取数据过多！");
         }
         Page<User> userPage = this.page(new Page<>(current, size),

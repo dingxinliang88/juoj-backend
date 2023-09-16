@@ -21,4 +21,9 @@ public interface CommonConstant {
 
     // endregion
 
+    /**
+     * 最大获取数
+     */
+    int MAX_FETCH_SIZE = 20;
+
 }

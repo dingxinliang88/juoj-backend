@@ -38,7 +38,7 @@ public class QuestionUpdateRequest implements Serializable {
      * }
      * ]
      */
-    private List<String> judgeCase;
+    private List<JudgeCase> judgeCases;
 
     /**
      * 判题配置（Json对象）
@@ -49,6 +49,6 @@ public class QuestionUpdateRequest implements Serializable {
      * "stackLimit": 1000
      * }
      */
-    private String judgeConfig;
+    private JudgeConfig judgeConfig;
 
 }

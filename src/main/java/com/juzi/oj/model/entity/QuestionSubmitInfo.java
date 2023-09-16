@@ -33,8 +33,6 @@ public class QuestionSubmitInfo implements Serializable {
 
     private LocalDate createTime;
 
-    private LocalDate updateTime;
-
     @TableLogic
     private Integer isDelete;
 }
