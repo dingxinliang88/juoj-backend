@@ -3,6 +3,7 @@ package com.juzi.oj.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.juzi.oj.model.entity.QuestionSubmitInfo;
 import com.juzi.oj.model.entity.User;
@@ -14,6 +15,15 @@ import javax.servlet.http.HttpServletRequest;
  * @author codejuzi
  */
 public interface QuestionSubmitInfoService extends IService<QuestionSubmitInfo> {
+
+    /**
+     * 题目提交
+     *
+     * @param questionSubmitAddRequest 题目提交信息
+     * @param request                  http request
+     * @return 题目提交信息id
+     */
+    Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request);
 
     /**
      * 分页获取题目提交信息

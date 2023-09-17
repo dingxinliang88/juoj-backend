@@ -16,7 +16,7 @@ public enum QuestionSubmitStatusEnum {
     // 0 - 待判题、1 - 判题中、2 - AC、3 - Failed
     WAITING("等待中", 0),
     RUNNING("判题中", 1),
-    AC("成功", 2),
+    SUCCEED("成功", 2),
     FAILED("失败", 3);
 
     private final String text;

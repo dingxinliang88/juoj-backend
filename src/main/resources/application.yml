@@ -31,3 +31,6 @@ mybatis-plus:
       logic-not-delete-value: 0
       update-strategy: not_null
       where-strategy: not_null
+
+codesandbox:
+  type: example

@@ -1,4 +1,4 @@
-package com.juzi.oj.model.dto.questionsubmit;
+package com.juzi.oj.core.codesandbox.model;
 
 import lombok.Data;
 

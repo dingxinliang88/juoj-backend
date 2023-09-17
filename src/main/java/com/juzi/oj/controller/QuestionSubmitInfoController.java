@@ -5,11 +5,13 @@ import com.juzi.oj.common.BaseResponse;
 import com.juzi.oj.common.ResultUtils;
 import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.exception.BusinessException;
+import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.juzi.oj.model.entity.QuestionSubmitInfo;
 import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.QuestionSubmitInfoVO;
 import com.juzi.oj.service.QuestionSubmitInfoService;
+import com.juzi.oj.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +32,19 @@ public class QuestionSubmitInfoController {
 
     @Resource
     private QuestionSubmitInfoService questionSubmitInfoService;
+
+    @Resource
+    private UserService userService;
+
+    @PostMapping("/submit")
+    @ApiOperation(value = "题目提交")
+    public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
+                                               HttpServletRequest request) {
+        if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(questionSubmitInfoService.doQuestionSubmit(questionSubmitAddRequest, request));
+    }
 
 
     @PostMapping("/list/page")

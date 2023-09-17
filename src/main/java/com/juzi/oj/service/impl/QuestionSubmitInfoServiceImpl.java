@@ -2,13 +2,20 @@ package com.juzi.oj.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.constants.CommonConstant;
+import com.juzi.oj.core.JudgeService;
+import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.mapper.QuestionSubmitInfoMapper;
+import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
+import com.juzi.oj.model.entity.Question;
 import com.juzi.oj.model.entity.QuestionSubmitInfo;
 import com.juzi.oj.model.entity.User;
+import com.juzi.oj.model.enums.QuestionSubmitLanguageEnum;
 import com.juzi.oj.model.enums.QuestionSubmitStatusEnum;
 import com.juzi.oj.model.vo.QuestionSubmitInfoVO;
 import com.juzi.oj.service.QuestionService;
@@ -21,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +44,66 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
     @Resource
     private QuestionService questionService;
 
+    @Resource
+    private JudgeService judgeService;
+
+
+    /**
+     * 判题线程池
+     */
+    private final Executor JUDGE_EXECUTOR_POOL = new ThreadPoolExecutor(2, 4, 10000, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(100));
+
+    @Override
+    public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
+        final User loginUser = userService.getLoginUser(request);
+
+        Long questionId = questionSubmitAddRequest.getQuestionId();
+        String submitLanguage = questionSubmitAddRequest.getSubmitLanguage();
+        String submitCode = questionSubmitAddRequest.getSubmitCode();
+
+        // 检验
+        QuestionSubmitLanguageEnum submitLanguageEnum = QuestionSubmitLanguageEnum.getEnumByValue(submitLanguage);
+        if (submitLanguageEnum == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR, "编程语言错误");
+        }
+
+        Question question = questionService.getById(questionId);
+        if (question == null) {
+            throw new BusinessException(StatusCode.NOT_FOUND_ERROR, "题目不存在");
+        }
+
+        // 设置提交数
+        // TODO: 2023/9/17 考虑是否需要加重量级锁，还是允许一定的误差
+        LambdaUpdateWrapper<Question> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Question::getId, questionId)
+                .set(Question::getSubmitNum, question.getSubmitNum() + 1);
+        boolean updateRes = questionService.update(updateWrapper);
+        if (!updateRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR, "数据保存失败");
+        }
+
+        // 每个用户串行提交题目
+        QuestionSubmitInfo submitInfo = new QuestionSubmitInfo();
+        submitInfo.setUserId(loginUser.getId());
+        submitInfo.setQuestionId(questionId);
+        submitInfo.setSubmitCode(submitCode);
+        submitInfo.setSubmitLanguage(submitLanguage);
+        submitInfo.setSubmitState(QuestionSubmitStatusEnum.WAITING.getValue()); // 初始状态
+        submitInfo.setJudgeInfo("{}");
+        boolean saveRes = this.save(submitInfo);
+        if (!saveRes) {
+            throw new BusinessException(StatusCode.SYSTEM_ERROR, "题目提交失败");
+        }
+
+        Long submitInfoId = submitInfo.getId();
+
+        // 执行判题服务
+        CompletableFuture.runAsync(() -> judgeService.doJudge(submitInfoId), JUDGE_EXECUTOR_POOL);
+
+        return submitInfoId;
+    }
+
     @Override
     public Page<QuestionSubmitInfoVO> listQuestionSubmitInfoVOByPage(QuestionSubmitQueryRequest questionSubmitQueryRequest, HttpServletRequest request) {
         Long current = questionSubmitQueryRequest.getCurrent();
@@ -47,6 +115,7 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
         final User loginUer = userService.getLoginUser(request);
         return getQuestionSubmitVOPage(questionSubmitPage, loginUer);
     }
+
 
     // region util function
 
