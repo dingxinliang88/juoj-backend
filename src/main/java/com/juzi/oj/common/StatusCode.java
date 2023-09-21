@@ -21,6 +21,7 @@ public enum StatusCode {
     TOO_MANY_REQUEST(42900, "请求频繁"),
     SYSTEM_ERROR(50000, "系统内部错误"),
     OPERATION_ERROR(50100, "操作错误"),
+    API_REQUEST_ERROR(50010, "接口调用错误"),
     BAD_GATEWAY(50200, "网关错误"),
     SERVICE_UNAVAILABLE(50300, "服务不可用");
 

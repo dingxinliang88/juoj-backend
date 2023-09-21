@@ -44,6 +44,7 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
     @Resource
     private QuestionService questionService;
 
+    // todo: 改成MQ解耦
     @Resource
     private JudgeService judgeService;
 

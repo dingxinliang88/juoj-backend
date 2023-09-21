@@ -33,4 +33,4 @@ mybatis-plus:
       where-strategy: not_null
 
 codesandbox:
-  type: example
+  type: remote

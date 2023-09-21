@@ -30,19 +30,15 @@ class QuestionMapperTest {
                 "\n" +
                 "Output a+b");
         question.setTags("[\"简单\", \"模拟\"]");
-        question.setAnswer("import java.io.*;\n" +
-                "import java.util.*;\n" +
-                "public class Main\n" +
-                "{\n" +
-                "            public static void main(String args[]) throws Exception\n" +
-                "            {\n" +
-                "                    Scanner cin=new Scanner(System.in);\n" +
-                "                    int a=cin.nextInt(),b=cin.nextInt();\n" +
-                "                    System.out.println(a+b);\n" +
-                "            }\n" +
+        question.setAnswer("public class Main {\n" +
+                "    public static void main(String[] args) {\n" +
+                "        int a = Integer.parseInt(args[0]);\n" +
+                "        int b = Integer.parseInt(args[1]);\n" +
+                "        System.out.println(a + b);\n" +
+                "    }\n" +
                 "}");
         question.setJudgeCase("[{\"input\":\"1 2\",\"output\":\"3\"},{\"input\":\"3 4\",\"output\":\"7\"}]");
-        question.setJudgeConfig("{\"timeLimit\":1000,\"memoryLimit\":1000,\"stackLimit\":1000}");
+        question.setJudgeConfig("{\"timeLimit\":1000,\"memoryLimit\":10000,\"stackLimit\":1000}");
 
         questionMapper.insert(question);
 

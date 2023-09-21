@@ -39,7 +39,7 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private JudgeManager judgeManager;
 
-    @Value("codesandbox.type:example")
+    @Value("${codesandbox.type:example}")
     private String judgeType;
 
     @Override
@@ -66,7 +66,7 @@ public class JudgeServiceImpl implements JudgeService {
         updateWrapper.eq(QuestionSubmitInfo::getId, questionSubmitId)
                 .set(QuestionSubmitInfo::getSubmitState, QuestionSubmitStatusEnum.RUNNING.getValue());
         boolean updateRes = questionSubmitInfoService.update(updateWrapper);
-        if(!updateRes) {
+        if (!updateRes) {
             throw new BusinessException(StatusCode.SYSTEM_ERROR, "题目提交信息状态修改失败");
         }
 
@@ -100,9 +100,9 @@ public class JudgeServiceImpl implements JudgeService {
         updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(QuestionSubmitInfo::getId, questionSubmitId)
                 .set(QuestionSubmitInfo::getSubmitState, QuestionSubmitStatusEnum.SUCCEED.getValue())
-                .set(QuestionSubmitInfo::getJudgeInfo, judgeInfo);
+                .set(QuestionSubmitInfo::getJudgeInfo, JSONUtil.toJsonStr(judgeInfo));
         updateRes = questionSubmitInfoService.update(updateWrapper);
-        if(!updateRes) {
+        if (!updateRes) {
             throw new BusinessException(StatusCode.SYSTEM_ERROR, "题目提交信息状态修改失败");
         }
 
