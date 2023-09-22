@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.constants.CommonConstant;
-import com.juzi.oj.core.JudgeService;
 import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.mapper.QuestionSubmitInfoMapper;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
@@ -18,6 +17,7 @@ import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.enums.QuestionSubmitLanguageEnum;
 import com.juzi.oj.model.enums.QuestionSubmitStatusEnum;
 import com.juzi.oj.model.vo.QuestionSubmitInfoVO;
+import com.juzi.oj.mq.OjMQProducer;
 import com.juzi.oj.service.QuestionService;
 import com.juzi.oj.service.QuestionSubmitInfoService;
 import com.juzi.oj.service.UserService;
@@ -28,8 +28,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
+
+import static com.juzi.oj.constants.OjMQConstant.OJ_EXCHANGE_NAME;
+import static com.juzi.oj.constants.OjMQConstant.OJ_ROUTING_KEY;
 
 /**
  * @author codejuzi
@@ -44,16 +46,17 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
     @Resource
     private QuestionService questionService;
 
-    // todo: 改成MQ解耦
+    // 改成MQ解耦
     @Resource
-    private JudgeService judgeService;
-
-
-    /**
-     * 判题线程池
-     */
-    private final Executor JUDGE_EXECUTOR_POOL = new ThreadPoolExecutor(2, 4, 10000, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(100));
+    private OjMQProducer ojMQProducer;
+//    @Resource
+//    private JudgeService judgeService;
+//
+//    /**
+//     * 判题线程池
+//     */
+//    private final Executor JUDGE_EXECUTOR_POOL = new ThreadPoolExecutor(2, 4, 10000, TimeUnit.MILLISECONDS,
+//            new LinkedBlockingQueue<>(100));
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
@@ -100,7 +103,10 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
         Long submitInfoId = submitInfo.getId();
 
         // 执行判题服务
-        CompletableFuture.runAsync(() -> judgeService.doJudge(submitInfoId), JUDGE_EXECUTOR_POOL);
+//        CompletableFuture.runAsync(() -> judgeService.doJudge(submitInfoId), JUDGE_EXECUTOR_POOL);
+
+        // 发送MQ消息
+        ojMQProducer.sendMessage(OJ_EXCHANGE_NAME, OJ_ROUTING_KEY, String.valueOf(submitInfoId));
 
         return submitInfoId;
     }
