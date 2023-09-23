@@ -1,12 +1,13 @@
 package com.juzi.oj.core;
 
 import com.juzi.oj.core.codesandbox.model.JudgeInfo;
-import com.juzi.oj.core.strategy.DefaultJudgeStrategy;
-import com.juzi.oj.core.strategy.JavaLanguageJudgeStrategy;
 import com.juzi.oj.core.strategy.JudgeContext;
 import com.juzi.oj.core.strategy.JudgeStrategy;
+import com.juzi.oj.core.strategy.JudgeStrategyFactory;
 import com.juzi.oj.model.enums.QuestionSubmitLanguageEnum;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * 判题管理器，简化代码
@@ -21,10 +22,10 @@ public class JudgeManager {
      */
     JudgeInfo doJudge(JudgeContext judgeContext) {
         String submitLanguage = judgeContext.getQuestionSubmitInfo().getSubmitLanguage();
-        JudgeStrategy judgeStrategy = new DefaultJudgeStrategy();
-        if (QuestionSubmitLanguageEnum.JAVA.getValue().equals(submitLanguage)) {
-            judgeStrategy = new JavaLanguageJudgeStrategy();
-        }
+        QuestionSubmitLanguageEnum languageEnum = Optional
+                .ofNullable(QuestionSubmitLanguageEnum.getEnumByValue(submitLanguage))
+                .orElse(QuestionSubmitLanguageEnum.JAVA);
+        JudgeStrategy judgeStrategy = JudgeStrategyFactory.newInstance(languageEnum);
         return judgeStrategy.doJudge(judgeContext);
     }
 }

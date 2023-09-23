@@ -7,8 +7,6 @@ import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.exception.BusinessException;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
-import com.juzi.oj.model.entity.QuestionSubmitInfo;
-import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.QuestionSubmitInfoVO;
 import com.juzi.oj.service.QuestionSubmitInfoService;
 import com.juzi.oj.service.UserService;
@@ -49,13 +47,16 @@ public class QuestionSubmitInfoController {
 
     @PostMapping("/list/page")
     @ApiOperation(value = "分页获取题目提交信息列表")
-    public BaseResponse<Page<QuestionSubmitInfoVO>> listQuestionSubmitVOByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
-                                                                             HttpServletRequest request) {
-        if(questionSubmitQueryRequest == null) {
+    public BaseResponse<Page<QuestionSubmitInfoVO>> listQuestionSubmitVOByPage(
+            @RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
+            HttpServletRequest request
+    ) {
+        if (questionSubmitQueryRequest == null) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
         }
 
         // 返回脱敏信息
-        return ResultUtils.success(questionSubmitInfoService.listQuestionSubmitInfoVOByPage(questionSubmitQueryRequest, request));
+        return ResultUtils.success(
+                questionSubmitInfoService.listQuestionSubmitInfoVOByPage(questionSubmitQueryRequest, request));
     }
 }

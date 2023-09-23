@@ -1,5 +1,7 @@
 package com.juzi.oj.constants;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -25,14 +27,14 @@ public interface UserConstant {
 
     Integer MAN = 1;
     Integer WOMEN = 0;
-    Set<Integer> GENDER_SET = Set.of(MAN, WOMEN);
+    Set<Integer> GENDER_SET = new HashSet<>(Arrays.asList(MAN, WOMEN));
 
 
     // 0-正常/1-注销/2-封号
     Integer NORMAL_STATE = 0;
     Integer LOGOUT_STATE = 1;
     Integer BAN_STATE = 2;
-    Set<Integer> STATE_SET = Set.of(NORMAL_STATE, LOGOUT_STATE, BAN_STATE);
+    Set<Integer> STATE_SET = new HashSet<>(Arrays.asList(NORMAL_STATE, LOGOUT_STATE, BAN_STATE));
 
     // endregion
 

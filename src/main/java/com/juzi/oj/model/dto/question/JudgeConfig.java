@@ -3,6 +3,8 @@ package com.juzi.oj.model.dto.question;
 import lombok.Data;
 
 /**
+ * 判题配置
+ *
  * @author codejuzi
  */
 @Data

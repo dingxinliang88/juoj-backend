@@ -19,7 +19,6 @@ import com.juzi.oj.model.vo.UserVO;
 import com.juzi.oj.service.QuestionService;
 import com.juzi.oj.service.UserService;
 import com.juzi.oj.utils.SqlUtils;
-import com.juzi.oj.utils.ThrowUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +32,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.juzi.oj.constants.CommonConstant.MAX_FETCH_SIZE;
+import static com.juzi.oj.constants.QuestionConstant.*;
+import static com.juzi.oj.utils.ThrowUtils.throwIf;
 
 /**
  * @author codejuzi
@@ -65,7 +66,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         User loginUser = userService.getLoginUser(request);
         question.setUserId(loginUser.getId());
         boolean result = this.save(question);
-        ThrowUtils.throwIf(!result, StatusCode.SYSTEM_ERROR);
+        throwIf(!result, StatusCode.SYSTEM_ERROR);
 
         return question.getId();
     }
@@ -77,7 +78,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         Long id = deleteRequest.getId();
         // 判断题目是否存在
         Question oldQuestion = this.getById(id);
-        ThrowUtils.throwIf(oldQuestion == null, StatusCode.NOT_FOUND_ERROR);
+        throwIf(oldQuestion == null, StatusCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可删除
         boolean inPerson = oldQuestion.getUserId().equals(user.getId());
         boolean isAdmin = userService.isAdmin(user);
@@ -86,7 +87,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         }
         boolean b = this.removeById(id);
 
-        ThrowUtils.throwIf(!b, StatusCode.SYSTEM_ERROR);
+        throwIf(!b, StatusCode.SYSTEM_ERROR);
         return Boolean.TRUE;
     }
 
@@ -95,53 +96,18 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         // 判断题目是否存在
         Long id = questionUpdateRequest.getId();
         Question oldQuestion = this.getById(id);
-        ThrowUtils.throwIf(oldQuestion == null, StatusCode.NOT_FOUND_ERROR);
+        throwIf(oldQuestion == null, StatusCode.NOT_FOUND_ERROR);
 
         LambdaUpdateWrapper<Question> updateWrapper = getUpdateWrapper(questionUpdateRequest);
 
         boolean result = this.update(updateWrapper);
 
-        ThrowUtils.throwIf(!result, StatusCode.SYSTEM_ERROR);
+        throwIf(!result, StatusCode.SYSTEM_ERROR);
 
         return Boolean.TRUE;
     }
 
-    @Override
-    public LambdaUpdateWrapper<Question> getUpdateWrapper(QuestionUpdateRequest questionUpdateRequest) {
-        if (questionUpdateRequest == null) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR);
-        }
 
-        Long id = questionUpdateRequest.getId();
-
-        if (id == null || id <= 0) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR);
-        }
-
-        String title = questionUpdateRequest.getTitle();
-        String content = questionUpdateRequest.getContent();
-        List<String> tags = questionUpdateRequest.getTags();
-        String answer = questionUpdateRequest.getAnswer();
-        List<JudgeCase> judgeCases = questionUpdateRequest.getJudgeCases();
-        JudgeConfig judgeConfig = questionUpdateRequest.getJudgeConfig();
-
-
-        LambdaUpdateWrapper<Question> updateWrapper = new LambdaUpdateWrapper<>();
-
-        updateWrapper.eq(Question::getId, id)
-                .set(StringUtils.isNotBlank(title) && title.length() < 64, Question::getTitle, title)
-                .set(StringUtils.isNotBlank(content) && content.length() < 8192, Question::getContent, content)
-                .set(StringUtils.isNotBlank(answer) && content.length() < 8192, Question::getAnswer, answer)
-                .set(CollectionUtil.isNotEmpty(tags), Question::getTags, JSONUtil.toJsonStr(tags));
-
-        String judgeConfigJson = JSONUtil.toJsonStr(judgeConfig);
-        String judgeCaseJson = JSONUtil.toJsonStr(judgeCases);
-        updateWrapper
-                .set(CollectionUtil.isNotEmpty(judgeCases) && judgeCaseJson.length() <= 8192, Question::getJudgeCase, judgeCaseJson)
-                .set(ObjectUtils.isNotEmpty(judgeConfig) && judgeConfigJson.length() <= 512, Question::getJudgeConfig, judgeConfigJson);
-
-        return updateWrapper;
-    }
 
     @Override
     public QuestionVO getQuestionVOById(Long questionId, HttpServletRequest request) {
@@ -178,7 +144,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         Long current = questionQueryRequest.getCurrent();
         Long size = questionQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > MAX_FETCH_SIZE, StatusCode.PARAMS_ERROR);
+        throwIf(size > MAX_FETCH_SIZE, StatusCode.PARAMS_ERROR);
         Page<Question> questionPage = this.page(new Page<>(current, size),
                 getQueryWrapper(questionQueryRequest));
 
@@ -199,7 +165,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         Long current = questionQueryRequest.getCurrent();
         Long size = questionQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > MAX_FETCH_SIZE, StatusCode.PARAMS_ERROR);
+        throwIf(size > MAX_FETCH_SIZE, StatusCode.PARAMS_ERROR);
         Page<Question> questionPage = this.page(new Page<>(current, size),
                 getQueryWrapper(questionQueryRequest));
 
@@ -213,7 +179,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         // 判断题目是否存在
         Long id = questionUpdateRequest.getId();
         Question oldQuestion = this.getById(id);
-        ThrowUtils.throwIf(oldQuestion == null, StatusCode.NOT_FOUND_ERROR);
+        throwIf(oldQuestion == null, StatusCode.NOT_FOUND_ERROR);
         // 仅本人编辑
         boolean inPerson = oldQuestion.getUserId().equals(loginUser.getId());
         if (!inPerson) {
@@ -223,7 +189,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         LambdaUpdateWrapper<Question> updateWrapper = getUpdateWrapper(questionUpdateRequest);
         boolean result = this.update(updateWrapper);
 
-        ThrowUtils.throwIf(!result, StatusCode.SYSTEM_ERROR);
+        throwIf(!result, StatusCode.SYSTEM_ERROR);
 
         return Boolean.TRUE;
     }
@@ -242,22 +208,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         String judgeCase = question.getJudgeCase();
         String judgeConfig = question.getJudgeConfig();
 
-        ThrowUtils.throwIf(StringUtils.isAnyBlank(title, content, tags, answer, judgeCase, judgeConfig), StatusCode.PARAMS_ERROR);
-        if (StringUtils.isNotBlank(title) && title.length() > 64) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR, "标题过长");
-        }
-        if (StringUtils.isNotBlank(content) && content.length() > 8192) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR, "内容过长");
-        }
-        if (StringUtils.isNotBlank(answer) && answer.length() > 8192) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR, "答案过长");
-        }
-        if (StringUtils.isNotBlank(judgeConfig) && judgeConfig.length() > 512) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR, "判题配置过长");
-        }
-        if (StringUtils.isNotBlank(judgeCase) && judgeCase.length() > 8192) {
-            throw new BusinessException(StatusCode.PARAMS_ERROR, "判题用例过长");
-        }
+        throwIf(StringUtils.isAnyBlank(title, content, tags, answer, judgeCase, judgeConfig), StatusCode.PARAMS_ERROR);
+        throwIf(title.length() > MAX_QUESTION_TITLE_LEN, StatusCode.PARAMS_ERROR, "标题过长");
+        throwIf(content.length() > MAX_QUESTION_CONTENT_LEN, StatusCode.PARAMS_ERROR, "内容过长");
+        throwIf(answer.length() > MAX_QUESTION_CONTENT_LEN, StatusCode.PARAMS_ERROR, "答案过长");
+        throwIf(judgeCase.length() > MAX_QUESTION_CONTENT_LEN, StatusCode.PARAMS_ERROR, "判题用例过长");
+        throwIf(judgeConfig.length() > MAX_QUESTION_CONFIG_LEN, StatusCode.PARAMS_ERROR, "判题配置过长");
+
     }
 
     @Override
@@ -286,6 +243,48 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public LambdaUpdateWrapper<Question> getUpdateWrapper(QuestionUpdateRequest questionUpdateRequest) {
+        if (questionUpdateRequest == null) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        Long id = questionUpdateRequest.getId();
+
+        if (id == null || id <= 0) {
+            throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+
+        String title = questionUpdateRequest.getTitle();
+        String content = questionUpdateRequest.getContent();
+        List<String> tags = questionUpdateRequest.getTags();
+        String answer = questionUpdateRequest.getAnswer();
+        List<JudgeCase> judgeCases = questionUpdateRequest.getJudgeCases();
+        JudgeConfig judgeConfig = questionUpdateRequest.getJudgeConfig();
+
+
+        LambdaUpdateWrapper<Question> updateWrapper = new LambdaUpdateWrapper<>();
+
+        updateWrapper.eq(Question::getId, id)
+                .set(StringUtils.isNotBlank(title) && title.length() < MAX_QUESTION_TITLE_LEN,
+                        Question::getTitle, title)
+                .set(StringUtils.isNotBlank(content) && content.length() < MAX_QUESTION_CONTENT_LEN,
+                        Question::getContent, content)
+                .set(StringUtils.isNotBlank(answer) && content.length() < MAX_QUESTION_CONTENT_LEN,
+                        Question::getAnswer, answer)
+                .set(CollectionUtil.isNotEmpty(tags), Question::getTags, JSONUtil.toJsonStr(tags));
+
+        String judgeConfigJson = JSONUtil.toJsonStr(judgeConfig);
+        String judgeCaseJson = JSONUtil.toJsonStr(judgeCases);
+        updateWrapper
+                .set(CollectionUtil.isNotEmpty(judgeCases) && judgeCaseJson.length() <= MAX_QUESTION_CONTENT_LEN,
+                        Question::getJudgeCase, judgeCaseJson)
+                .set(ObjectUtils.isNotEmpty(judgeConfig) && judgeConfigJson.length() <= MAX_QUESTION_CONFIG_LEN,
+                        Question::getJudgeConfig, judgeConfigJson);
+
+        return updateWrapper;
     }
 
     @Override

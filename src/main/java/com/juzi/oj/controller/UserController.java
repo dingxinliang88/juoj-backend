@@ -161,7 +161,7 @@ public class UserController {
         return ResultUtils.success(userService.updateState(userStateUpdateRequest));
     }
 
-    @PutMapping("/reset/pwd")
+    @PutMapping("/reset_pwd")
     @AuthCheck(mustRole = ADMIN_ROLE)
     @ApiOperation(value = "管理员重置用户密码")
     public BaseResponse<Boolean> resetUserPwd(@RequestBody UserResetPwdRequest userResetPwdRequest) {

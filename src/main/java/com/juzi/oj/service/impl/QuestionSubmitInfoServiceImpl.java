@@ -46,17 +46,8 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
     @Resource
     private QuestionService questionService;
 
-    // 改成MQ解耦
     @Resource
     private OjMQProducer ojMQProducer;
-//    @Resource
-//    private JudgeService judgeService;
-//
-//    /**
-//     * 判题线程池
-//     */
-//    private final Executor JUDGE_EXECUTOR_POOL = new ThreadPoolExecutor(2, 4, 10000, TimeUnit.MILLISECONDS,
-//            new LinkedBlockingQueue<>(100));
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
@@ -78,7 +69,7 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
         }
 
         // 设置提交数
-        // TODO: 2023/9/17 考虑是否需要加重量级锁，还是允许一定的误差
+        // TODO: 2023/9/17 考虑是否需要加锁，还是允许一定的误差
         LambdaUpdateWrapper<Question> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Question::getId, questionId)
                 .set(Question::getSubmitNum, question.getSubmitNum() + 1);
@@ -102,10 +93,7 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
 
         Long submitInfoId = submitInfo.getId();
 
-        // 执行判题服务
-//        CompletableFuture.runAsync(() -> judgeService.doJudge(submitInfoId), JUDGE_EXECUTOR_POOL);
-
-        // 发送MQ消息
+        // 执行判题服务，发送MQ消息
         ojMQProducer.sendMessage(OJ_EXCHANGE_NAME, OJ_ROUTING_KEY, String.valueOf(submitInfoId));
 
         return submitInfoId;

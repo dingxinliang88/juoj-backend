@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * Java语言判题策略实现
+ *
  * @author codejuzi
  */
 public class JavaLanguageJudgeStrategy implements JudgeStrategy {
@@ -25,10 +27,10 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
         Question question = judgeContext.getQuestion();
         List<JudgeCase> judgeCaseList = judgeContext.getJudgeCaseList();
 
-        JudgeInfoMessageEnum judgeInfoMessageEnum = JudgeInfoMessageEnum.ACCEPTED;
-        JudgeInfo judgeInfoResponse = new JudgeInfo();
-        judgeInfoResponse.setMemory(executedMemory);
-        judgeInfoResponse.setTime(executedTime);
+        JudgeInfoMessageEnum judgeInfoMsgEnum = JudgeInfoMessageEnum.ACCEPTED;
+        JudgeInfo judgeInfoResp = new JudgeInfo();
+        judgeInfoResp.setMemory(executedMemory);
+        judgeInfoResp.setTime(executedTime);
 
         // 判断题目限制
         String judgeConfigJson = question.getJudgeConfig();
@@ -36,35 +38,35 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
         Long needMemoryLimit = judgeConfig.getMemoryLimit();
         Long needTimeLimit = judgeConfig.getTimeLimit();
         if (executedMemory > needMemoryLimit) {
-            judgeInfoMessageEnum = JudgeInfoMessageEnum.MEMORY_LIMIT_EXCEEDED;
-            judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
-            return judgeInfoResponse;
+            judgeInfoMsgEnum = JudgeInfoMessageEnum.MEMORY_LIMIT_EXCEEDED;
+            judgeInfoResp.setMessage(judgeInfoMsgEnum.getValue());
+            return judgeInfoResp;
         }
         // Java 程序本身需要额外执行 5 秒钟（算是给的特权吧，哈哈哈）
         long JAVA_PROGRAM_TIME_COST = 5000L;
         if ((executedTime - JAVA_PROGRAM_TIME_COST) > needTimeLimit) {
-            judgeInfoMessageEnum = JudgeInfoMessageEnum.TIME_LIMIT_EXCEEDED;
-            judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
-            return judgeInfoResponse;
+            judgeInfoMsgEnum = JudgeInfoMessageEnum.TIME_LIMIT_EXCEEDED;
+            judgeInfoResp.setMessage(judgeInfoMsgEnum.getValue());
+            return judgeInfoResp;
         }
 
         // 判断沙箱执行的结果输出数量是否和预期输出数量相等
         if (outputList.size() != inputList.size()) {
-            judgeInfoMessageEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
-            judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
-            return judgeInfoResponse;
+            judgeInfoMsgEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
+            judgeInfoResp.setMessage(judgeInfoMsgEnum.getValue());
+            return judgeInfoResp;
         }
         // 依次判断每一项输出和预期输出是否相等
         for (int i = 0; i < judgeCaseList.size(); i++) {
             JudgeCase judgeCase = judgeCaseList.get(i);
             if (!judgeCase.getOutput().equals(outputList.get(i))) {
-                judgeInfoMessageEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
-                judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
-                return judgeInfoResponse;
+                judgeInfoMsgEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
+                judgeInfoResp.setMessage(judgeInfoMsgEnum.getValue());
+                return judgeInfoResp;
             }
         }
 
-        judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
-        return judgeInfoResponse;
+        judgeInfoResp.setMessage(judgeInfoMsgEnum.getValue());
+        return judgeInfoResp;
     }
 }

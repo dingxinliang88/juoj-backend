@@ -71,8 +71,6 @@ public class JudgeServiceImpl implements JudgeService {
         }
 
         // 4、调用沙箱，得到执行结果
-        CodeSandbox codeSandbox = new CodeSandboxProxy(CodeSandboxFactory.newInstance(judgeType));
-
         List<JudgeCase> judgeCaseList = JSONUtil.toList(question.getJudgeCase(), JudgeCase.class);
         List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).collect(Collectors.toList());
         ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest.builder()
@@ -80,6 +78,7 @@ public class JudgeServiceImpl implements JudgeService {
                 .language(submitInfo.getSubmitLanguage())
                 .inputList(inputList)
                 .build();
+        CodeSandbox codeSandbox = new CodeSandboxProxy(CodeSandboxFactory.newInstance(judgeType));
         ExecuteCodeResponse executeCodeResponse = codeSandbox.execute(executeCodeRequest);
 
         // 5、根据沙箱的执行状态，设置题目的判题状态和信息
