@@ -21,7 +21,8 @@ public class OjMQInitTask {
     public static void doInitMQ() {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         // TODO 配置远程服务MQ信息
-        connectionFactory.setHost("localhost");
+//        connectionFactory.setHost("localhost");
+        connectionFactory.setHost("8.130.102.239");
         connectionFactory.setPort(5672);
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");

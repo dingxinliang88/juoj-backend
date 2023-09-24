@@ -9,14 +9,12 @@ spring:
     password: ${datasource.password}
   redis:
     port: 6379
-    host: localhost
+    host: ${redis.host}
     database: 0
+#    username: ${redis.username}
+#    password: ${redis.password}
   rabbitmq:
-    host: localhost
+    host: ${rabbitmq.host}
     port: 5672
-    username: guest
-    password: guest
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    username: ${rabbitmq.username}
+    password: ${rabbitmq.password}

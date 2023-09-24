@@ -128,14 +128,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // 3. 记录用户的登录态
-        request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, user);
+        request.getSession().setAttribute(USER_LOGIN_STATE, user);
         return this.getUserVO(user);
     }
 
     @Override
     public User getLoginUser(HttpServletRequest request) {
         // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(StatusCode.NOT_LOGIN_ERROR);

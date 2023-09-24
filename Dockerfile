@@ -1,12 +1,8 @@
-FROM maven:3.8.3-jdk-8-slim as builder
+FROM openjdk:8-jre-alpine
 
-# Copy local code to the container image.
+# Copy the jar file to the container image.
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-
-# Build a release artifact.
-RUN mvn package -DskipTests
+COPY juoj-backend-1.0.jar ./juoj-backend.jar
 
 # Run the web service on container startup.
-CMD ["java","-jar","/app/target/juoj-backend-1.0.jar","--spring.profiles.active=prod"]
+CMD ["java", "-jar", "/app/juoj-backend.jar", "--spring.profiles.active=prod"]

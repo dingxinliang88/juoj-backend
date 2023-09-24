@@ -21,7 +21,8 @@ import static com.juzi.oj.core.auth.AuthRequest.AUTH_REQUEST_SECRET;
 public class RemoteCodeSandbox implements CodeSandbox {
     @Override
     public ExecuteCodeResponse execute(ExecuteCodeRequest executeCodeRequest) {
-        String url = "http://localhost:8888/exec_code";
+//        String url = "http://localhost:8888/exec_code";
+        String url = "http://8.130.102.239:8888/exec_code";
         String json = JSONUtil.toJsonStr(executeCodeRequest);
         String respStr;
         try (HttpResponse response = HttpUtil.createPost(url)
