@@ -17,6 +17,8 @@ server:
     session:
       cookie:
         max-age: 2592000
+        same-site: none
+        secure: true
 
 mybatis-plus:
   configuration:

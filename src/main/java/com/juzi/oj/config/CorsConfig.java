@@ -13,9 +13,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 // 允许发送 Cookie
                 .allowCredentials(true)
-                // TODO (CodeJuzi) 放行哪些域名（必须用 patterns，否则 * 会和 allowCredentials 冲突）
-//                .allowedOriginPatterns("http://127.0.0.1:8080", "http://localhost:8080", "http://oj.codejuzi.icu")
-                .allowedOriginPatterns("*")
+                // TODO (CodeJuzi) 放行哪些域名（必须用 patterns，否则 * 会和 allowCredentials 冲突），或者直接使用Nginx实现反向代理
+                .allowedOriginPatterns("http://localhost:8080", "http://*:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("*");

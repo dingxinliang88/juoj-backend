@@ -5,17 +5,16 @@ import com.juzi.oj.common.BaseResponse;
 import com.juzi.oj.common.ResultUtils;
 import com.juzi.oj.common.StatusCode;
 import com.juzi.oj.exception.BusinessException;
+import com.juzi.oj.manager.RedisLimiterManager;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.juzi.oj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
+import com.juzi.oj.model.entity.User;
 import com.juzi.oj.model.vo.QuestionSubmitInfoVO;
 import com.juzi.oj.service.QuestionSubmitInfoService;
 import com.juzi.oj.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +33,21 @@ public class QuestionSubmitInfoController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private RedisLimiterManager limiterManager;
+
     @PostMapping("/submit")
     @ApiOperation(value = "题目提交")
     public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
                                                HttpServletRequest request) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(StatusCode.PARAMS_ERROR);
+        }
+        // 限流
+        final User loginUser = userService.getLoginUser(request);
+        boolean limitRes = limiterManager.doRateLimit(loginUser.getId().toString());
+        if (!limitRes) {
+            throw new BusinessException(StatusCode.TOO_MANY_REQUEST, "提交过于频繁，请稍后重试");
         }
         return ResultUtils.success(questionSubmitInfoService.doQuestionSubmit(questionSubmitAddRequest, request));
     }

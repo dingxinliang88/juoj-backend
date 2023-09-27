@@ -31,7 +31,6 @@ import static com.juzi.oj.constants.UserConstant.ADMIN_ROLE;
 @RestController
 @RequestMapping("/user")
 @Api(tags = "UserController")
-//@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class UserController {
 
     @Resource

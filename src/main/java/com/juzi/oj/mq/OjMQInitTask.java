@@ -3,7 +3,10 @@ package com.juzi.oj.mq;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,17 +18,27 @@ import static com.juzi.oj.constants.OjMQConstant.*;
  *
  * @author codejuzi
  */
+@Component
 @Slf4j
+@Data
+@ConfigurationProperties("spring.rabbitmq")
 public class OjMQInitTask {
 
-    public static void doInitMQ() {
+    private String host;
+
+    private Integer port;
+
+    private String username;
+
+    private String password;
+
+    public void doInitMQ() {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         // TODO 配置远程服务MQ信息
-//        connectionFactory.setHost("localhost");
-        connectionFactory.setHost("8.130.102.239");
-        connectionFactory.setPort(5672);
-        connectionFactory.setUsername("guest");
-        connectionFactory.setPassword("guest");
+        connectionFactory.setHost(host);
+        connectionFactory.setPort(port);
+        connectionFactory.setUsername(username);
+        connectionFactory.setPassword(password);
         try (Connection connection = connectionFactory.newConnection()) {
             Channel channel = connection.createChannel();
             // 创建交换机
@@ -54,6 +67,6 @@ public class OjMQInitTask {
     }
 
     public static void main(String[] args) {
-        doInitMQ();
+        new OjMQInitTask().doInitMQ();
     }
 }

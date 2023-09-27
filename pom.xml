@@ -23,6 +23,7 @@
         <mp.version>3.5.3.1</mp.version>
         <hutool.version>5.8.21</hutool.version>
         <knife4j.version>3.0.3</knife4j.version>
+        <redisson.version>3.23.5</redisson.version>
     </properties>
 
     <dependencies>
@@ -57,6 +58,11 @@
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
         </dependency>
 
         <!-- mysql + mybatis-->
