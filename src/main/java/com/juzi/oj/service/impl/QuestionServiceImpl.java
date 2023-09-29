@@ -52,7 +52,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         if (tags != null) {
             question.setTags(JSONUtil.toJsonStr(tags));
         }
-        List<JudgeCase> judgeCase = questionAddRequest.getJudgeCases();
+        List<JudgeCase> judgeCase = questionAddRequest.getJudgeCase();
         if (judgeCase != null) {
             question.setJudgeCase(JSONUtil.toJsonStr(judgeCase));
         }
@@ -261,7 +261,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         String content = questionUpdateRequest.getContent();
         List<String> tags = questionUpdateRequest.getTags();
         String answer = questionUpdateRequest.getAnswer();
-        List<JudgeCase> judgeCases = questionUpdateRequest.getJudgeCases();
+        List<JudgeCase> judgeCases = questionUpdateRequest.getJudgeCase();
         JudgeConfig judgeConfig = questionUpdateRequest.getJudgeConfig();
 
 

@@ -4,8 +4,7 @@ spring:
   profiles:
     active: dev
   session:
-    # 失效时间：1天
-    timeout: 86400
+    timeout: 2592000
     store-type: redis
   mvc:
     pathmatch:
@@ -17,8 +16,6 @@ server:
     session:
       cookie:
         max-age: 2592000
-        same-site: none
-        secure: true
 
 mybatis-plus:
   configuration:

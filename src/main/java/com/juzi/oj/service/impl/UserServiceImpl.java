@@ -28,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.juzi.oj.constants.CommonConstant.MAX_FETCH_SIZE;
@@ -40,7 +41,7 @@ import static com.juzi.oj.constants.UserConstant.*;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    private final AntPathMatcher ACC_MATCHER = new AntPathMatcher();
+    private final Pattern ACC_MATCHER = Pattern.compile(ACC_PATTEN);
 
     @Override
     public Long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -61,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(StatusCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
 
-        if (!ACC_MATCHER.match(ACC_PATTEN, userAccount)) {
+        if (!ACC_MATCHER.matcher(userAccount).find()) {
             throw new BusinessException(StatusCode.PARAMS_ERROR, "账号含有特殊字符");
         }
 
