@@ -8,4 +8,4 @@ target/
 
 .DS_Store
 
-src/main/resources/database_config
+src/main/resources/config/env.properties

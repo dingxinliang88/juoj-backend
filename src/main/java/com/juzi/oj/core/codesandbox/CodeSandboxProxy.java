@@ -5,6 +5,8 @@ import com.juzi.oj.core.codesandbox.model.ExecuteCodeResponse;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 代码沙箱代理类，增强能力（增加日志功能）
+ *
  * @author codejuzi
  */
 @Slf4j

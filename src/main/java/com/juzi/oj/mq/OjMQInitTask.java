@@ -34,7 +34,6 @@ public class OjMQInitTask {
 
     public void doInitMQ() {
         ConnectionFactory connectionFactory = new ConnectionFactory();
-        // TODO 配置远程服务MQ信息
         connectionFactory.setHost(host);
         connectionFactory.setPort(port);
         connectionFactory.setUsername(username);
@@ -61,8 +60,7 @@ public class OjMQInitTask {
             log.info("MQ Init Successful!");
 
         } catch (Exception e) {
-            log.error("MQ Init Failed!");
-            e.printStackTrace();
+            log.error("MQ Init Failed!", e);
         }
     }
 

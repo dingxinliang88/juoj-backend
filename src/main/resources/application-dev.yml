@@ -1,7 +1,7 @@
 spring:
   config:
     import:
-      - classpath:/database_config/database.properties
+      - classpath:/config/env.properties
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${datasource.url}
@@ -9,13 +9,14 @@ spring:
     password: 12345678
   redis:
     port: 6379
-    host: ${redis.dev.host}
+    host: ${redis.host}
+    password: ${redis.password}
     database: 0
   rabbitmq:
-    host: ${rabbitmq.dev.host}
+    host: ${rabbitmq.host}
     port: 5672
-    username: guest
-    password: guest
+    username: ${rabbitmq.username}
+    password: ${rabbitmq.password}
 
 mybatis-plus:
   configuration:

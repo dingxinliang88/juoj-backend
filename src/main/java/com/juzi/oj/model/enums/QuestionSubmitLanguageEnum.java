@@ -1,5 +1,6 @@
 package com.juzi.oj.model.enums;
 
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -11,8 +12,9 @@ import java.util.stream.Collectors;
  *
  * @author codejuzi
  */
+@Getter
 public enum QuestionSubmitLanguageEnum {
-
+    DEFAULT("default", "java"),
     JAVA("java", "java"),
     CPLUSPLUS("cpp", "cpp"),
     C_SHAPE("csharp", "csharp"),
@@ -44,13 +46,5 @@ public enum QuestionSubmitLanguageEnum {
             }
         }
         return null;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getText() {
-        return text;
     }
 }

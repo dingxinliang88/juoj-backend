@@ -18,13 +18,16 @@ import java.util.Optional;
 public class JudgeManager {
 
     /**
-     * 执行判题
+     * 获取判题策略，执行判题
+     *
+     * @param judgeContext 判题信息上下文
+     * @return 判题结果
      */
     JudgeInfo doJudge(JudgeContext judgeContext) {
         String submitLanguage = judgeContext.getQuestionSubmitInfo().getSubmitLanguage();
         QuestionSubmitLanguageEnum languageEnum = Optional
                 .ofNullable(QuestionSubmitLanguageEnum.getEnumByValue(submitLanguage))
-                .orElse(QuestionSubmitLanguageEnum.JAVA);
+                .orElse(QuestionSubmitLanguageEnum.DEFAULT);
         JudgeStrategy judgeStrategy = JudgeStrategyFactory.newInstance(languageEnum);
         return judgeStrategy.doJudge(judgeContext);
     }

@@ -89,7 +89,7 @@ public class OjMQConsumer {
                     .set(Question::getAcNum, question.getAcNum() + 1);
             boolean updateRes = questionService.update(updateWrapper);
             if (!updateRes) {
-                throw new BusinessException(StatusCode.SYSTEM_ERROR, "数据保存失败");
+                log.warn("AC数量统计失败， questionId: {}", questionId);
             }
 
             channel.basicAck(deliveryTag, false);

@@ -3,6 +3,8 @@ package com.juzi.oj.core.codesandbox.model;
 import lombok.Data;
 
 /**
+ * 判题执行信息
+ *
  * @author codejuzi
  */
 @Data

@@ -19,7 +19,7 @@ public class RedissonConfig {
     private Integer database;
     private String host;
     private Integer port;
-//    private String password;
+    private String password;
 
 
     @Bean
@@ -27,8 +27,8 @@ public class RedissonConfig {
         Config redissonConfig = new Config();
         redissonConfig.useSingleServer()
                 .setDatabase(database)
-                .setAddress(String.format("redis://%s:%s", host, port));
-//                .setPassword(password);
+                .setAddress(String.format("redis://%s:%s", host, port))
+                .setPassword(password);
         return Redisson.create(redissonConfig);
     }
 }

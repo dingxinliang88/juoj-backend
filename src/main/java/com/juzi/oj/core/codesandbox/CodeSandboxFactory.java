@@ -5,6 +5,8 @@ import com.juzi.oj.core.codesandbox.impl.RemoteCodeSandbox;
 import com.juzi.oj.core.codesandbox.impl.ThirdPartyCodeSandbox;
 
 /**
+ * 代码沙箱静态工厂
+ *
  * @author codejuzi
  */
 public class CodeSandboxFactory {

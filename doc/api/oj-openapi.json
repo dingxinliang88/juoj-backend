@@ -1,0 +1,2332 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Ju-OJ接口文档",
+    "contact": {
+      "name": "CodeJuzi",
+      "url": "codejuzi.icu",
+      "email": "codejuzi@163.com"
+    }
+  },
+  "host": "localhost:8080",
+  "tags": [
+    {
+      "name": "UserController",
+      "description": "User Controller"
+    },
+    {
+      "name": "question-controller",
+      "description": "Question Controller"
+    },
+    {
+      "name": "question-submit-info-controller",
+      "description": "Question Submit Info Controller"
+    }
+  ],
+  "paths": {
+    "/api/question/add": {
+      "post": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "添加题目",
+        "operationId": "addQuestionUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionAddRequest",
+            "description": "questionAddRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionAddRequest",
+              "originalRef": "QuestionAddRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«long»",
+              "originalRef": "BaseResponse«long»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/delete": {
+      "delete": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "删除题目",
+        "operationId": "deleteQuestionUsingDELETE",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "deleteRequest",
+            "description": "deleteRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteRequest",
+              "originalRef": "DeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/question/edit": {
+      "post": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "用户编辑题目",
+        "operationId": "editQuestionUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionUpdateRequest",
+            "description": "questionUpdateRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionUpdateRequest",
+              "originalRef": "QuestionUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/get": {
+      "get": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "获取题目信息",
+        "operationId": "getQuestionByIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Question»",
+              "originalRef": "BaseResponse«Question»"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/get/vo": {
+      "get": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "获取题目VO信息",
+        "operationId": "getQuestionVoByIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«QuestionVO»",
+              "originalRef": "BaseResponse«QuestionVO»"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/list/my/page/vo": {
+      "post": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "分页获取当前用户创建的题目列表",
+        "operationId": "listSelfQuestionVOByPageUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionQueryRequest",
+            "description": "questionQueryRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionQueryRequest",
+              "originalRef": "QuestionQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Page«QuestionVO»»",
+              "originalRef": "BaseResponse«Page«QuestionVO»»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/list/page": {
+      "post": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "管理员分页获取题目列表（所有信息）",
+        "operationId": "listQuestionByPageUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionQueryRequest",
+            "description": "questionQueryRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionQueryRequest",
+              "originalRef": "QuestionQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Page«Question»»",
+              "originalRef": "BaseResponse«Page«Question»»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/list/page/vo": {
+      "post": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "分页获取题目VO列表",
+        "operationId": "listQuestionVOByPageUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionQueryRequest",
+            "description": "questionQueryRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionQueryRequest",
+              "originalRef": "QuestionQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Page«QuestionVO»»",
+              "originalRef": "BaseResponse«Page«QuestionVO»»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question/update": {
+      "put": {
+        "tags": [
+          "question-controller"
+        ],
+        "summary": "管理员更新题目信息",
+        "operationId": "updateQuestionUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionUpdateRequest",
+            "description": "questionUpdateRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionUpdateRequest",
+              "originalRef": "QuestionUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question_submit_info/list/page": {
+      "post": {
+        "tags": [
+          "question-submit-info-controller"
+        ],
+        "summary": "分页获取题目提交信息列表",
+        "operationId": "listQuestionSubmitVOByPageUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionSubmitQueryRequest",
+            "description": "questionSubmitQueryRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionSubmitQueryRequest",
+              "originalRef": "QuestionSubmitQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Page«QuestionSubmitInfoVO»»",
+              "originalRef": "BaseResponse«Page«QuestionSubmitInfoVO»»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/question_submit_info/submit": {
+      "post": {
+        "tags": [
+          "question-submit-info-controller"
+        ],
+        "summary": "题目提交",
+        "operationId": "doQuestionSubmitUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "questionSubmitAddRequest",
+            "description": "questionSubmitAddRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionSubmitAddRequest",
+              "originalRef": "QuestionSubmitAddRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«long»",
+              "originalRef": "BaseResponse«long»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/change_pwd": {
+      "put": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "用户修改密码",
+        "operationId": "changePwdUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userChangePwdRequest",
+            "description": "userChangePwdRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserChangePwdRequest",
+              "originalRef": "UserChangePwdRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/delete": {
+      "delete": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "管理员删除用户",
+        "operationId": "deleteUserUsingDELETE",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "deleteRequest",
+            "description": "deleteRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteRequest",
+              "originalRef": "DeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/user/get": {
+      "get": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "管理员根据 id 获取用户",
+        "operationId": "getUserByIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«User»",
+              "originalRef": "BaseResponse«User»"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/get/login": {
+      "get": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "获取当前用户信息",
+        "operationId": "getLoginUserUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«UserVO»",
+              "originalRef": "BaseResponse«UserVO»"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/list/page": {
+      "post": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "管理员分页获取用户列表",
+        "operationId": "listUserByPageUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userQueryRequest",
+            "description": "userQueryRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserQueryRequest",
+              "originalRef": "UserQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Page«User»»",
+              "originalRef": "BaseResponse«Page«User»»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/list/page/vo": {
+      "post": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "分页获取用户列表",
+        "operationId": "listUserVOByPageUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userQueryRequest",
+            "description": "userQueryRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserQueryRequest",
+              "originalRef": "UserQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«Page«UserVO»»",
+              "originalRef": "BaseResponse«Page«UserVO»»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "用户登录",
+        "operationId": "userLoginUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userLoginRequest",
+            "description": "userLoginRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserLoginRequest",
+              "originalRef": "UserLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«UserVO»",
+              "originalRef": "BaseResponse«UserVO»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "post": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "退出登录",
+        "operationId": "userLogoutUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "用户注册",
+        "operationId": "userRegisterUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userRegisterRequest",
+            "description": "userRegisterRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserRegisterRequest",
+              "originalRef": "UserRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«long»",
+              "originalRef": "BaseResponse«long»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/reset_pwd": {
+      "put": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "管理员重置用户密码",
+        "operationId": "resetUserPwdUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userResetPwdRequest",
+            "description": "userResetPwdRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserResetPwdRequest",
+              "originalRef": "UserResetPwdRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/update": {
+      "put": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "管理员修改用户信息",
+        "operationId": "updateUserUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userUpdateRequest",
+            "description": "userUpdateRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdateRequest",
+              "originalRef": "UserUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/update/my": {
+      "put": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "用户修改个人用户信息",
+        "operationId": "updateSelfUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userUpdateRequest",
+            "description": "userUpdateRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdateRequest",
+              "originalRef": "UserUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/user/update/state": {
+      "put": {
+        "tags": [
+          "UserController"
+        ],
+        "summary": "管理员修改用户状态信息",
+        "operationId": "updateStateUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userStateUpdateRequest",
+            "description": "userStateUpdateRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserStateUpdateRequest",
+              "originalRef": "UserStateUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse«boolean»",
+              "originalRef": "BaseResponse«boolean»"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "BaseResponse«Page«QuestionSubmitInfoVO»»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/Page«QuestionSubmitInfoVO»",
+          "originalRef": "Page«QuestionSubmitInfoVO»"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«Page«QuestionSubmitInfoVO»»"
+    },
+    "BaseResponse«Page«QuestionVO»»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/Page«QuestionVO»",
+          "originalRef": "Page«QuestionVO»"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«Page«QuestionVO»»"
+    },
+    "BaseResponse«Page«Question»»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/Page«Question»",
+          "originalRef": "Page«Question»"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«Page«Question»»"
+    },
+    "BaseResponse«Page«UserVO»»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/Page«UserVO»",
+          "originalRef": "Page«UserVO»"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«Page«UserVO»»"
+    },
+    "BaseResponse«Page«User»»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/Page«User»",
+          "originalRef": "Page«User»"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«Page«User»»"
+    },
+    "BaseResponse«QuestionVO»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/QuestionVO",
+          "originalRef": "QuestionVO"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«QuestionVO»"
+    },
+    "BaseResponse«Question»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/Question",
+          "originalRef": "Question"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«Question»"
+    },
+    "BaseResponse«UserVO»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/UserVO",
+          "originalRef": "UserVO"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«UserVO»"
+    },
+    "BaseResponse«User»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/User",
+          "originalRef": "User"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«User»"
+    },
+    "BaseResponse«boolean»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«boolean»"
+    },
+    "BaseResponse«long»": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "BaseResponse«long»"
+    },
+    "DeleteRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "DeleteRequest"
+    },
+    "JudgeCase": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "string",
+          "refType": null
+        },
+        "output": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "JudgeCase"
+    },
+    "JudgeConfig": {
+      "type": "object",
+      "properties": {
+        "memoryLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "stackLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "timeLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "JudgeConfig"
+    },
+    "JudgeInfo": {
+      "type": "object",
+      "properties": {
+        "memory": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "message": {
+          "type": "string",
+          "refType": null
+        },
+        "time": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "JudgeInfo"
+    },
+    "OrderItem": {
+      "type": "object",
+      "properties": {
+        "asc": {
+          "type": "boolean",
+          "refType": null
+        },
+        "column": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "OrderItem"
+    },
+    "Page«QuestionSubmitInfoVO»": {
+      "type": "object",
+      "properties": {
+        "countId": {
+          "type": "string",
+          "refType": null
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "maxLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "optimizeCountSql": {
+          "type": "boolean",
+          "refType": null
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem",
+            "originalRef": "OrderItem"
+          },
+          "refType": "OrderItem"
+        },
+        "pages": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QuestionSubmitInfoVO",
+            "originalRef": "QuestionSubmitInfoVO"
+          },
+          "refType": "QuestionSubmitInfoVO"
+        },
+        "searchCount": {
+          "type": "boolean",
+          "refType": null
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "Page«QuestionSubmitInfoVO»"
+    },
+    "Page«QuestionVO»": {
+      "type": "object",
+      "properties": {
+        "countId": {
+          "type": "string",
+          "refType": null
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "maxLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "optimizeCountSql": {
+          "type": "boolean",
+          "refType": null
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem",
+            "originalRef": "OrderItem"
+          },
+          "refType": "OrderItem"
+        },
+        "pages": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QuestionVO",
+            "originalRef": "QuestionVO"
+          },
+          "refType": "QuestionVO"
+        },
+        "searchCount": {
+          "type": "boolean",
+          "refType": null
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "Page«QuestionVO»"
+    },
+    "Page«Question»": {
+      "type": "object",
+      "properties": {
+        "countId": {
+          "type": "string",
+          "refType": null
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "maxLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "optimizeCountSql": {
+          "type": "boolean",
+          "refType": null
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem",
+            "originalRef": "OrderItem"
+          },
+          "refType": "OrderItem"
+        },
+        "pages": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Question",
+            "originalRef": "Question"
+          },
+          "refType": "Question"
+        },
+        "searchCount": {
+          "type": "boolean",
+          "refType": null
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "Page«Question»"
+    },
+    "Page«UserVO»": {
+      "type": "object",
+      "properties": {
+        "countId": {
+          "type": "string",
+          "refType": null
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "maxLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "optimizeCountSql": {
+          "type": "boolean",
+          "refType": null
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem",
+            "originalRef": "OrderItem"
+          },
+          "refType": "OrderItem"
+        },
+        "pages": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserVO",
+            "originalRef": "UserVO"
+          },
+          "refType": "UserVO"
+        },
+        "searchCount": {
+          "type": "boolean",
+          "refType": null
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "Page«UserVO»"
+    },
+    "Page«User»": {
+      "type": "object",
+      "properties": {
+        "countId": {
+          "type": "string",
+          "refType": null
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "maxLimit": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "optimizeCountSql": {
+          "type": "boolean",
+          "refType": null
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem",
+            "originalRef": "OrderItem"
+          },
+          "refType": "OrderItem"
+        },
+        "pages": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User",
+            "originalRef": "User"
+          },
+          "refType": "User"
+        },
+        "searchCount": {
+          "type": "boolean",
+          "refType": null
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "Page«User»"
+    },
+    "Question": {
+      "type": "object",
+      "properties": {
+        "acNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "answer": {
+          "type": "string",
+          "refType": null
+        },
+        "content": {
+          "type": "string",
+          "refType": null
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "favourNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "isDelete": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "judgeCase": {
+          "type": "string",
+          "refType": null
+        },
+        "judgeConfig": {
+          "type": "string",
+          "refType": null
+        },
+        "submitNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "tags": {
+          "type": "string",
+          "refType": null
+        },
+        "thumbNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "title": {
+          "type": "string",
+          "refType": null
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "Question"
+    },
+    "QuestionAddRequest": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string",
+          "refType": null
+        },
+        "content": {
+          "type": "string",
+          "refType": null
+        },
+        "judgeCases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JudgeCase",
+            "originalRef": "JudgeCase"
+          },
+          "refType": "JudgeCase"
+        },
+        "judgeConfig": {
+          "$ref": "#/definitions/JudgeConfig",
+          "originalRef": "JudgeConfig",
+          "refType": "JudgeConfig"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "refType": "string"
+        },
+        "title": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "QuestionAddRequest"
+    },
+    "QuestionQueryRequest": {
+      "type": "object",
+      "properties": {
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "sortField": {
+          "type": "string",
+          "refType": null
+        },
+        "sortOrder": {
+          "type": "string",
+          "refType": null
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "refType": "string"
+        },
+        "title": {
+          "type": "string",
+          "refType": null
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "QuestionQueryRequest"
+    },
+    "QuestionSubmitAddRequest": {
+      "type": "object",
+      "properties": {
+        "questionId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "submitCode": {
+          "type": "string",
+          "refType": null
+        },
+        "submitLanguage": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "QuestionSubmitAddRequest"
+    },
+    "QuestionSubmitInfoVO": {
+      "type": "object",
+      "properties": {
+        "createTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "judgeInfo": {
+          "$ref": "#/definitions/JudgeInfo",
+          "originalRef": "JudgeInfo",
+          "refType": "JudgeInfo"
+        },
+        "questionId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "submitCode": {
+          "type": "string",
+          "refType": null
+        },
+        "submitLanguage": {
+          "type": "string",
+          "refType": null
+        },
+        "submitState": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "userVO": {
+          "$ref": "#/definitions/UserVO",
+          "originalRef": "UserVO",
+          "refType": "UserVO"
+        }
+      },
+      "title": "QuestionSubmitInfoVO"
+    },
+    "QuestionSubmitQueryRequest": {
+      "type": "object",
+      "properties": {
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "questionId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "sortField": {
+          "type": "string",
+          "refType": null
+        },
+        "sortOrder": {
+          "type": "string",
+          "refType": null
+        },
+        "submitLanguage": {
+          "type": "string",
+          "refType": null
+        },
+        "submitState": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "QuestionSubmitQueryRequest"
+    },
+    "QuestionUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string",
+          "refType": null
+        },
+        "content": {
+          "type": "string",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "judgeCases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JudgeCase",
+            "originalRef": "JudgeCase"
+          },
+          "refType": "JudgeCase"
+        },
+        "judgeConfig": {
+          "$ref": "#/definitions/JudgeConfig",
+          "originalRef": "JudgeConfig",
+          "refType": "JudgeConfig"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "refType": "string"
+        },
+        "title": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "QuestionUpdateRequest"
+    },
+    "QuestionVO": {
+      "type": "object",
+      "properties": {
+        "acNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "content": {
+          "type": "string",
+          "refType": null
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "favourNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "judgeConfig": {
+          "$ref": "#/definitions/JudgeConfig",
+          "originalRef": "JudgeConfig",
+          "refType": "JudgeConfig"
+        },
+        "submitNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "refType": "string"
+        },
+        "thumbNum": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "title": {
+          "type": "string",
+          "refType": null
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "userVO": {
+          "$ref": "#/definitions/UserVO",
+          "originalRef": "UserVO",
+          "refType": "UserVO"
+        }
+      },
+      "title": "QuestionVO"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "createTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "email": {
+          "type": "string",
+          "refType": null
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "isDelete": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "nickname": {
+          "type": "string",
+          "refType": null
+        },
+        "phone": {
+          "type": "string",
+          "refType": null
+        },
+        "salt": {
+          "type": "string",
+          "refType": null
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "userAccount": {
+          "type": "string",
+          "refType": null
+        },
+        "userAvatar": {
+          "type": "string",
+          "refType": null
+        },
+        "userPassword": {
+          "type": "string",
+          "refType": null
+        },
+        "userProfile": {
+          "type": "string",
+          "refType": null
+        },
+        "userRole": {
+          "type": "string",
+          "refType": null
+        },
+        "userState": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        }
+      },
+      "title": "User"
+    },
+    "UserChangePwdRequest": {
+      "type": "object",
+      "properties": {
+        "checkPassword": {
+          "type": "string",
+          "refType": null
+        },
+        "newPassword": {
+          "type": "string",
+          "refType": null
+        },
+        "originPassword": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "UserChangePwdRequest"
+    },
+    "UserLoginRequest": {
+      "type": "object",
+      "properties": {
+        "userAccount": {
+          "type": "string",
+          "refType": null
+        },
+        "userPassword": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "UserLoginRequest"
+    },
+    "UserQueryRequest": {
+      "type": "object",
+      "properties": {
+        "current": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "nickname": {
+          "type": "string",
+          "refType": null
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "sortField": {
+          "type": "string",
+          "refType": null
+        },
+        "sortOrder": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "UserQueryRequest"
+    },
+    "UserRegisterRequest": {
+      "type": "object",
+      "properties": {
+        "checkPassword": {
+          "type": "string",
+          "refType": null
+        },
+        "userAccount": {
+          "type": "string",
+          "refType": null
+        },
+        "userPassword": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "UserRegisterRequest"
+    },
+    "UserResetPwdRequest": {
+      "type": "object",
+      "properties": {
+        "checkPassword": {
+          "type": "string",
+          "refType": null
+        },
+        "newPassword": {
+          "type": "string",
+          "refType": null
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        }
+      },
+      "title": "UserResetPwdRequest"
+    },
+    "UserStateUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "userState": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        }
+      },
+      "title": "UserStateUpdateRequest"
+    },
+    "UserUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "refType": null
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "nickname": {
+          "type": "string",
+          "refType": null
+        },
+        "phone": {
+          "type": "string",
+          "refType": null
+        },
+        "userAvatar": {
+          "type": "string",
+          "refType": null
+        },
+        "userProfile": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "UserUpdateRequest"
+    },
+    "UserVO": {
+      "type": "object",
+      "properties": {
+        "createTime": {
+          "type": "string",
+          "format": "date",
+          "refType": null
+        },
+        "email": {
+          "type": "string",
+          "refType": null
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32",
+          "refType": null
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "refType": null
+        },
+        "nickname": {
+          "type": "string",
+          "refType": null
+        },
+        "phone": {
+          "type": "string",
+          "refType": null
+        },
+        "userAvatar": {
+          "type": "string",
+          "refType": null
+        },
+        "userProfile": {
+          "type": "string",
+          "refType": null
+        },
+        "userRole": {
+          "type": "string",
+          "refType": null
+        }
+      },
+      "title": "UserVO"
+    }
+  }
+}

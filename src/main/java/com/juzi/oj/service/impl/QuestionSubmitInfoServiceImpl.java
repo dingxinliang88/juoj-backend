@@ -22,6 +22,7 @@ import com.juzi.oj.service.QuestionService;
 import com.juzi.oj.service.QuestionSubmitInfoService;
 import com.juzi.oj.service.UserService;
 import com.juzi.oj.utils.SqlUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ import static com.juzi.oj.constants.OjMQConstant.OJ_ROUTING_KEY;
 /**
  * @author codejuzi
  */
+@Slf4j
 @Service
 public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInfoMapper, QuestionSubmitInfo>
         implements QuestionSubmitInfoService {
@@ -75,7 +77,7 @@ public class QuestionSubmitInfoServiceImpl extends ServiceImpl<QuestionSubmitInf
                 .set(Question::getSubmitNum, question.getSubmitNum() + 1);
         boolean updateRes = questionService.update(updateWrapper);
         if (!updateRes) {
-            throw new BusinessException(StatusCode.SYSTEM_ERROR, "数据保存失败");
+            log.warn("题目提交数量统计失败， questionId: {}", questionId);
         }
 
         // 每个用户串行提交题目
